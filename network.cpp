@@ -31,7 +31,7 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
     bool skip_till_strend = false;
     char* cmd = nullptr;
     std::vector<char*> argv;
-    //Example: "\xFFset\x00\xFEfoo\x00\FEbar\x00" means CMD:set ARG:{foo,bar}
+    // Example: "\xFFset\x00\xFEfoo\x00\FEbar\x00" means CMD:set ARG:{foo,bar}
     while(length) {
         if(!skip_till_strend) {
             if(*p == PACK_START) {
@@ -39,7 +39,7 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
                     cmd = p + 1;
                     skip_till_strend = true;
                 } else {
-                    handle_cmd(cmd, argv);
+                    Network::call_interface(cmd, argv);
                     cmd = nullptr;
                     argv.clear();
                 }
@@ -54,7 +54,7 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
         length--;
     }
     if(cmd != nullptr) {
-        handle_cmd(cmd, argv);
+        Network::call_interface(cmd, argv);
     }
     free(buf->base);
 }
@@ -64,7 +64,7 @@ static void connect_cb(uv_connect_t* req, int status)
     if(status == 0) {
         uv_read_start(req->handle, alloc_cb, read_cb);
         Network::connected = true;
-        init_handlers();
+        Network::init_interfaces();
     } else {
         printf("Unable to create connection: Status %i\n", status);
     }

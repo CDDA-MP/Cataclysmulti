@@ -1,14 +1,15 @@
 #include "protocol.h"
 #include <unordered_map>
 #include <string>
-typedef void (*Handler)(std::vector<char*>);
-std::unordered_map<std::string, Handler> Handlers;
-
-void handle_cmd(char* cmd, std::vector<char*> argv)
+using namespace Network;
+std::unordered_map<std::string, Interface> Interfaces;
+namespace Network
 {
-    Handler hnd = Handlers[cmd];
-    if(hnd)
-        hnd(argv);
+void call_interface(char* cmd, std::vector<char*> argv)
+{
+    Interface t = Interfaces[cmd];
+    if(t)
+        t(argv);
 }
 
 static void printVersion(std::vector<char*> argv)
@@ -16,7 +17,8 @@ static void printVersion(std::vector<char*> argv)
     puts(argv[0]);
 }
 
-void init_handlers()
+void init_interfaces()
 {
-    Handlers["TEST"] = printVersion;
+    Interfaces["TEST"] = printVersion;
+}
 }
