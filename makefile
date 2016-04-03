@@ -1,7 +1,7 @@
 #WARNINGS = -Wall -Wextra -Wno-switch -Wno-sign-compare -Wno-missing-braces -Wno-unused-parameter -Wno-char-subscripts
 #DEBUG = -g
 #PROFILE = -pg
-OTHERS = -O0
+OTHERS = -O0 -std=c++11
 
 ODIR = obj
 DDIR = .deps
@@ -13,7 +13,7 @@ CXX = g++
 
 CFLAGS = $(WARNINGS) $(DEBUG) $(PROFILE) $(OTHERS)
 
-LDFLAGS = -luv
+LDFLAGS = -luv -lncursesw
 
 SOURCES = $(wildcard *.cpp)
 _OBJS = $(SOURCES:.cpp=.o)

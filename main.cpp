@@ -2,21 +2,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "network.h"
+#include "input.h"
 #include "version.h"
+#include "main.h"
+bool IsGameOver;
+void gameLoop(const char* address, int port);
 
-int main(int argc, char *argv[]){
-    if (argc < 3){
-        puts(VERSION_NAME " " VERSION_PREFIX " " VERSION_VERSION"\n"
-            "Usage: cmulti <address> <port>\n");
+int main(int argc, char* argv[])
+{
+    if(argc < 3) {
+        puts(VERSION_NAME " " VERSION_PREFIX " " VERSION_VERSION "\n"
+                          "Usage: cmulti <address> <port>\n");
+        return 1;
     }
-    const char *address = argv[1];
-    int port = atoi(argv[2]);
+    IsGameOver = false;
+    gameLoop(argv[1], atoi(argv[2]));
+    gameOver();
 
-    uv_loop_t *loop = uv_default_loop(); //get default loop
-    Network::connected = false;
-    Network::connect(loop,address,port); //connect to the server
-    
-    uv_run(loop, UV_RUN_DEFAULT); //run uv loop
-     
     return 0;
+}
+
+void gameLoop(const char* address, int port)
+{
+    uv_loop_t* loop = uv_default_loop();
+
+    Network::connect(loop, address, port);
+    Input::init(loop);
+
+    uv_run(loop, UV_RUN_DEFAULT);
+}
+
+void gameOver()
+{
+    IsGameOver = true;
+    Network::disconnect();
+    Input::end();
+    exit(0);
 }

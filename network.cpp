@@ -7,6 +7,11 @@
 #include "game.h"
 #include "protocol.h"
 
+namespace Network
+{
+bool connected;
+static uv_connect_t* req;
+
 static void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
 {
     buf->base = (char*)malloc(suggested_size);
@@ -16,6 +21,7 @@ static void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
 #define STRING_END '\x00'
 #define PACK_START '\xFF'
 #define ARG_START '\xFE'
+
 static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
 {
     // Check connection
@@ -70,20 +76,28 @@ static void connect_cb(uv_connect_t* req, int status)
     }
 }
 
-namespace Network
+static void close_cb(uv_handle_s*)
 {
-bool connected;
+}
+
 void connect(uv_loop_t* loop, const char* ip, int port)
 {
+    Network::connected = false;
     uv_tcp_t* socket = new uv_tcp_t;
     uv_tcp_init(loop, socket);
 
-    uv_connect_t* req = new uv_connect_t;
+    Network::req = new uv_connect_t;
 
     sockaddr_in* dest = new sockaddr_in;
     uv_ip4_addr(ip, port, dest);
 
     uv_tcp_connect(req, socket, (const sockaddr*)dest, connect_cb);
     // TODO:Connect timeout
+}
+void disconnect()
+{
+    if(Network::connected) {
+        uv_close((uv_handle_s*)Network::req, close_cb);
+    }
 }
 }
