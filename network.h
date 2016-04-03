@@ -5,7 +5,8 @@
 namespace Network
 {
 extern bool connected;
-void connect(uv_loop_t* loop, const char* ip, int port);
+void connect(const char* ip, int port);
+void sendRaw(char* data, int len);
 void disconnect();
 }
 

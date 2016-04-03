@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <vector>
 #include "network.h"
 #include "game.h"
 #include "protocol.h"
+#include "main.h"
 
 namespace Network
 {
 bool connected;
 static uv_connect_t* req;
-
+uv_tcp_t* socket;
 static void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
 {
     buf->base = (char*)malloc(suggested_size);
@@ -26,8 +26,7 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
 {
     // Check connection
     if(!nread) {
-        puts("disconnected!");
-        Network::connected = false;
+        Network::disconnect();
         return;
     }
 
@@ -71,6 +70,7 @@ static void connect_cb(uv_connect_t* req, int status)
         uv_read_start(req->handle, alloc_cb, read_cb);
         Network::connected = true;
         Network::init_interfaces();
+        gameInit();
     } else {
         printf("Unable to create connection: Status %i\n", status);
     }
@@ -78,13 +78,29 @@ static void connect_cb(uv_connect_t* req, int status)
 
 static void close_cb(uv_handle_s*)
 {
+    Network::connected = false;
 }
 
-void connect(uv_loop_t* loop, const char* ip, int port)
+static void write_cb(uv_write_s*, int)
+{
+}
+
+void sendRaw(char* data, int len) // Send raw data to server
+{
+    if(Network::connected) {
+        uv_write_t* wr = new uv_write_t;
+        uv_buf_t buf = uv_buf_init(data, len);
+        uv_write(wr, (uv_stream_t*)Network::socket, &buf, 1, write_cb);
+    } else {
+        gameOver();
+    }
+}
+
+void connect(const char* ip, int port)
 {
     Network::connected = false;
-    uv_tcp_t* socket = new uv_tcp_t;
-    uv_tcp_init(loop, socket);
+    socket = new uv_tcp_t;
+    uv_tcp_init(uv_default_loop(), socket);
 
     Network::req = new uv_connect_t;
 
@@ -98,6 +114,7 @@ void disconnect()
 {
     if(Network::connected) {
         uv_close((uv_handle_s*)Network::req, close_cb);
+        uv_stop(uv_default_loop());
     }
 }
 }

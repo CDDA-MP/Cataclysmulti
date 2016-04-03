@@ -3,7 +3,7 @@
 #include <uv.h>
 namespace Input
 {
-void init(uv_loop_t* loop);
+void init();
 void end();
 }
 

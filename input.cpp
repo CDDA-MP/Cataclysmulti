@@ -19,7 +19,7 @@ static void input_loop(void* arg)
         }
     }
 }
-void init(uv_loop_t* loop)
+void init()
 {
     initscr();
     noecho();

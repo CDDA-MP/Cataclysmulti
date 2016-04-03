@@ -5,34 +5,34 @@
 #include "input.h"
 #include "version.h"
 #include "main.h"
-bool IsGameOver;
-void gameLoop(const char* address, int port);
+#include "game.h"
+
+bool IsGameOver = false;
 
 int main(int argc, char* argv[])
 {
-    if(argc < 3) {
+    if(argc < 4) {
         puts(VERSION_NAME " " VERSION_PREFIX " " VERSION_VERSION "\n"
-                          "Usage: cmulti <address> <port>\n");
+                          "Usage: cmulti <address> <port> <name>\n");
         return 1;
     }
-    IsGameOver = false;
-    gameLoop(argv[1], atoi(argv[2]));
-    gameOver();
 
+    Game::name = argv[3];
+    Network::connect(argv[1], atoi(argv[2]));
+
+    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+
+    gameOver();
     return 0;
 }
 
-void gameLoop(const char* address, int port)
+void gameInit() // Call when connected.
 {
-    uv_loop_t* loop = uv_default_loop();
-
-    Network::connect(loop, address, port);
-    Input::init(loop);
-
-    uv_run(loop, UV_RUN_DEFAULT);
+    // TODO:Login
+    Input::init();
 }
 
-void gameOver()
+void gameOver() // Call when disconnected
 {
     IsGameOver = true;
     Network::disconnect();
