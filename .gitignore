@@ -1,2 +1,16 @@
-obj/
 *~
+
+#CMake Cache files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+#Target file(s)
+cataclysmulti
+
+#astyle backups
+*.orig
+
+#Auto generated Makefile
+Makefile
+makefile
