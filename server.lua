@@ -1,12 +1,13 @@
---Run this using luvit.
+--This script designed for testing Cataclysmulti
+--Run this by luvit.
 local net = require ("net")
 
 local server = net.createServer(function(client)
   client:on("data",function(data)
-    client:write(data)
+    print(data..'\n')
   end)
   print("Connected!")
-  client:write("\xffCHECK\x00\xFEARG1\x00")
+  client:write('{"cmd":"printVersion","version":"1.0"}')
 end)
 
 server:listen(8000, "127.0.0.1")
