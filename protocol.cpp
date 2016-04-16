@@ -1,24 +1,30 @@
 #include "protocol.h"
 #include <unordered_map>
-#include <string>
+#include <rapidjson/document.h>
+
+#include "network.h"
 using namespace Network;
 std::unordered_map<std::string, Interface> Interfaces;
+
 namespace Network
 {
-void call_interface(char* cmd, std::vector<char*> argv)
+void call_interface(const rapidjson::Document& dom)
 {
-    Interface t = Interfaces[cmd];
-    if(t)
-        t(argv);
+    CHECKMEMBER(dom,"cmd")
+    Interface t = Interfaces[dom["cmd"].GetString()];
+    if(t) {
+        t(dom);
+    }
 }
 
-static void printVersion(std::vector<char*> argv)
+static void printVersion(const rapidjson::Document& dom)
 {
-    puts(argv[0]);
+    puts(dom["version"].GetString());
+    Network::send(dom);
 }
 
 void init_interfaces()
 {
-    Interfaces["TEST"] = printVersion;
+    Interfaces["printVersion"] = printVersion;
 }
 }
