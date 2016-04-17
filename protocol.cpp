@@ -3,6 +3,7 @@
 #include <rapidjson/document.h>
 
 #include "network.h"
+#include "input.h"
 using namespace Network;
 std::unordered_map<std::string, Interface> Interfaces;
 

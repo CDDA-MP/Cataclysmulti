@@ -1,9 +1,13 @@
+#include "main.h"
+
 #include <uv.h>
-#include <stdlib.h>
+#include <rapidjson/document.h>
+
 #include "network.h"
 #include "input.h"
+#include "output.h"
 #include "version.h"
-#include "main.h"
+
 #include "game.h"
 
 bool IsGameOver = false;
@@ -25,7 +29,15 @@ int main(int argc, char* argv[])
 
 void gameInit() // Call when connected.
 {
-    //Input::init();
+    Input::init();
+
+    //send client metadata.
+    rapidjson::Document dom;
+    dom.SetObject();
+    dom.AddMember("cmd","metadata",dom.GetAllocator());
+    dom.AddMember("client",VERSION_NAME,dom.GetAllocator());
+    dom.AddMember("ver",VERSION_PREFIX " " VERSION_VERSION,dom.GetAllocator());
+    Network::send(dom);
 }
 
 void gameOver() // Call when disconnected

@@ -1,5 +1,4 @@
---This script designed for testing Cataclysmulti
---Run this by luvit.
+--Run this using luvit.
 local net = require ("net")
 
 local server = net.createServer(function(client)
