@@ -1,7 +1,7 @@
 #include "main.h"
 
 #include <uv.h>
-#include <rapidjson/document.h>
+#include <json11.hpp>
 
 #include "network.h"
 #include "input.h"
@@ -11,7 +11,7 @@
 #include "game.h"
 
 bool IsGameOver = false;
-
+using namespace json11;
 int main(int argc, char* argv[])
 {
     if(argc < 4) {
@@ -32,12 +32,12 @@ void gameInit() // Call when connected.
     Input::init();
 
     //send client metadata.
-    rapidjson::Document dom;
-    dom.SetObject();
-    dom.AddMember("cmd","metadata",dom.GetAllocator());
-    dom.AddMember("client",VERSION_NAME,dom.GetAllocator());
-    dom.AddMember("ver",VERSION_PREFIX " " VERSION_VERSION,dom.GetAllocator());
-    Network::send(dom);
+    Network::send(Json::object {
+        {"cmd","metadata"},
+        {"client",VERSION_NAME},
+        {"ver",VERSION_PREFIX " " VERSION_VERSION},
+        {"name",Game::name},
+    });
 }
 
 void gameOver() // Call when disconnected

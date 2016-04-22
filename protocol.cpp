@@ -1,31 +1,32 @@
 #include "protocol.h"
 #include <unordered_map>
-#include <rapidjson/document.h>
+#include <json11.hpp>
 
 #include "network.h"
 #include "input.h"
 using namespace Network;
-std::unordered_map<std::string, Interface> Interfaces;
+std::unordered_map<std::string, Callback> Callbacks;
 
 namespace Network
 {
-void call_interface(const rapidjson::Document& dom)
+void call_Callback(const json11::Json& json)
 {
-    CHECKMEMBER(dom,"cmd")
-    Interface t = Interfaces[dom["cmd"].GetString()];
+
+    CHECKMEMBER(json,"cmd");
+    Callback t = Callbacks[json["cmd"].string_value()];
     if(t) {
-        t(dom);
+        t(json);
     }
 }
 
-static void printVersion(const rapidjson::Document& dom)
+static void printVersion(const json11::Json& json)
 {
-    puts(dom["version"].GetString());
-    Network::send(dom);
+    puts(json["version"].string_value().c_str());
+    Network::send(json);
 }
 
-void init_interfaces()
+void init_Callbacks()
 {
-    Interfaces["printVersion"] = printVersion;
+    Callbacks["printVersion"] = printVersion;
 }
 }

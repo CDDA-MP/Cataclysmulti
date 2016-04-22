@@ -1,8 +1,8 @@
-#include <uv.h>
-#include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/stringbuffer.h>
 #include "network.h"
+
+#include <uv.h>
+#include <json11.hpp>
+
 #include "game.h"
 #include "protocol.h"
 #include "main.h"
@@ -28,9 +28,10 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
         Network::disconnect();
         return;
     }
-    rapidjson::Document dom;
-    if(!dom.Parse(buf->base).HasParseError()) {
-        Network::call_interface(dom);
+    std::string err;
+    json11::Json json = json11::Json::parse(buf->base,err);
+    if(err.length() == 0) {
+        Network::call_Callback(json);
     }
 }
 
@@ -39,7 +40,7 @@ static void connect_cb(uv_connect_t* req, int status)
     if(status == 0) {
         uv_read_start(req->handle, alloc_cb, read_cb);
         Network::connected = true;
-        Network::init_interfaces();
+        Network::init_Callbacks();
         gameInit();
     } else {
         printf("Unable to create connection: Status %i\n", status);
@@ -54,12 +55,12 @@ static void close_cb(uv_handle_s*)
 static void write_cb(uv_write_s*, int)
 {
 }
-void send(const rapidjson::Document& dom)// Send json to server
+void send(const json11::Json& json)
 {
-    rapidjson::StringBuffer sb;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
-    dom.Accept(writer);
-    Network::sendRaw(sb.GetString(),(unsigned int)sb.GetSize());
+    Network::send(json.dump());
+}
+void send(const std::string& str) {
+    Network::sendRaw(str.c_str(),str.length());
 }
 void sendRaw(const char* data, unsigned int len) // Send raw data to server
 {
