@@ -81,10 +81,10 @@ void connect(const char* ip, int port)
 
     Network::req = new uv_connect_t;
 
-    sockaddr_in* dest = new sockaddr_in;
-    uv_ip4_addr(ip, port, dest);
+    sockaddr dest;
+    uv_ip4_addr(ip, port, (sockaddr_in*)&dest);
 
-    uv_tcp_connect(req, socket, (const sockaddr*)dest, connect_cb);
+    uv_tcp_connect(req, socket, &dest, connect_cb);
     // TODO:Connect timeout
 }
 void disconnect()
