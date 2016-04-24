@@ -1,8 +1,11 @@
 #include "output.h"
+
 #include <string>
 #include <ncurses.h>
 
-void query_yn()
+#include "input.h"
+namespace UI {
+void Msgbox(std::string str)
 {
-
+}
 }

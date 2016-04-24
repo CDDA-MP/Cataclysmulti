@@ -90,7 +90,7 @@ void connect(const char* ip, int port)
 void disconnect()
 {
     if(Network::connected) {
-        if(uv_is_active((uv_handle_s*)Network::socket) && !uv_is_closing((uv_handle_s*)Network::socket)){
+        if(uv_is_active((uv_handle_s*)Network::socket) && !uv_is_closing((uv_handle_s*)Network::socket)) {
             uv_close((uv_handle_s*)Network::socket, close_cb);
         }
         uv_stop(uv_default_loop());

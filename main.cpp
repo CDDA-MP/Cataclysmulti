@@ -2,6 +2,7 @@
 
 #include <uv.h>
 #include <json11.hpp>
+#include <ncurses.h>
 
 #include "network.h"
 #include "input.h"
@@ -27,10 +28,20 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+class SubInputHandler:public Input::InputHandler {
+public:
+    bool HandleInput(int key)
+    {
+        printw("Main Key Pressed[once]:%i",key);
+        refresh();
+        return true;
+    }
+};
+
 void gameInit() // Call when connected.
 {
     Input::init();
-
+    Input::queue.push_back(new SubInputHandler);
     //send client metadata.
     Network::send(Json::object {
         {"cmd","metadata"},

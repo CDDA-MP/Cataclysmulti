@@ -1,41 +1,40 @@
+#include "input.h"
+
 #include <pthread.h>
 #include <ncurses.h>
-#include <stdlib.h>
 #include <assert.h>
-#include "input.h"
+#include <vector>
+
 #include "main.h"
+#include "game.h"
 namespace Input
 {
-static pthread_t input_thread;
-
-static void* input_loop(void* arg)
+static pthread_t InputThread;
+std::vector<InputHandler*> queue;
+static void* InputLoop(void* arg)
 {
     while(!IsGameOver) {
-        int ch = getch();
-        if(ch != -1) {
-            // TODO:Input Handle
-            printw("tada:%i\n",ch);
-            refresh();
+        int key = getch();
+        if(key != -1) {
+            if(queue.empty()) {
+                Game::HandleInput(key);
+            } else if(queue[0]->HandleInput(key)) {
+                delete queue[0];
+                queue.erase(queue.begin());
+            }
         } else {
             gameOver();
         }
     }
 }
+
 void init()
 {
     initscr();
     noecho();
-    nodelay(stdscr, false); // Let stdin block.
-    Input::start();
-}
-void start()//Start or restart getch loop thread
-{
-    int r = pthread_create(&input_thread, NULL,input_loop,NULL);
+    nodelay(stdscr, false); // make stdin block.
+    int r = pthread_create(&InputThread, NULL,InputLoop,NULL);
     assert(!r);
-}
-void pause()//Kill getch loop thread
-{
-    pthread_cancel(input_thread);
 }
 void end()
 {
