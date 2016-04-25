@@ -20,7 +20,6 @@ static void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf)
     buf->len = suggested_size;
 }
 
-
 static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
 {
     // Check connection
@@ -59,9 +58,11 @@ void send(const json11::Json& json)
 {
     Network::send(json.dump());
 }
+
 void send(const std::string& str) {
     Network::sendRaw(str.c_str(),str.length());
 }
+
 void sendRaw(const char* data, unsigned int len) // Send raw data to server
 {
     if(Network::connected) {
@@ -87,6 +88,7 @@ void connect(const char* ip, int port)
     uv_tcp_connect(req, socket, &dest, connect_cb);
     // TODO:Connect timeout
 }
+
 void disconnect()
 {
     if(Network::connected) {

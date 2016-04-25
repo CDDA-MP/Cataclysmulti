@@ -3,6 +3,7 @@ local net = require "net"
 local json = require "json"
 local callbacks = {}
 local server = net.createServer(function(client)
+client:write('{"cmd":"msgbox","str":"stringtest"}')
 client:on("data",function(data)
     local js = json.decode(data) or {}
     (callbacks[js.cmd] or p)(js)

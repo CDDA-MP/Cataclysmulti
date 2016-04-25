@@ -24,10 +24,12 @@ static void printVersion(const json11::Json& json)
     puts(json["version"].string_value().c_str());
     Network::send(json);
 }
+
 static void msgbox(const json11::Json& json)
 {
     UI::Msgbox(json["str"].string_value());
 }
+
 void init_Callbacks()
 {
     Callbacks["printVersion"] = printVersion;
