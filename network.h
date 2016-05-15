@@ -12,7 +12,7 @@ void disconnect();
 
 void send(const json11::Json& json);
 void send(const std::string& str);
-void sendRaw(const char* data,unsigned int len);//Send Raw data to server
+void sendRaw(const char* data,unsigned long len);//Send Raw data to server
 
 }
 

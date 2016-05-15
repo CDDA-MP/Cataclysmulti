@@ -7,14 +7,15 @@ namespace Input
 class InputHandler {
 public:
     bool Inited;
-    virtual void Init() {}
-    virtual bool HandleInput(int key) {
-        return true;
-    }
+    InputHandler();
+    virtual ~InputHandler();
+    virtual void Init();
+    virtual bool HandleInput(int key);
 };
 
 extern std::vector<InputHandler*> queue;
 void init();
 void end();
+void queue_pushback(InputHandler* handler);
 }
 #endif

@@ -28,9 +28,16 @@ static void read_cb(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf)
         return;
     }
     std::string err;
-    json11::Json json = json11::Json::parse(buf->base,err);
+    std::string fulljsonstr = buf->base;
+    char lastchar = fulljsonstr[fulljsonstr.size()-1];
+    if(lastchar == ',') fulljsonstr.pop_back();
+    if(lastchar !=']') fulljsonstr.push_back(']');
+    if(fulljsonstr[0] !='[') fulljsonstr.insert(0,"[");
+    std::vector<json11::Json> json = json11::Json::parse(fulljsonstr,err).array_items();
     if(err.length() == 0) {
-        Network::call_Callback(json);
+        for(auto &s:json) {
+            Network::call_Callback(s);
+        }
     }
 }
 
@@ -39,8 +46,7 @@ static void connect_cb(uv_connect_t* req, int status)
     if(status == 0) {
         uv_read_start(req->handle, alloc_cb, read_cb);
         Network::connected = true;
-        Network::init_Callbacks();
-        gameInit();
+        Game::gameInit();
     } else {
         printf("Unable to create connection: Status %i\n", status);
     }
@@ -63,14 +69,14 @@ void send(const std::string& str) {
     Network::sendRaw(str.c_str(),str.length());
 }
 
-void sendRaw(const char* data, unsigned int len) // Send raw data to server
+void sendRaw(const char* data, unsigned long len) // Send raw data to server
 {
     if(Network::connected) {
         uv_write_t* wr = new uv_write_t;
-        uv_buf_t buf = uv_buf_init((char *)data, len);
+        uv_buf_t buf = uv_buf_init((char *)data, (unsigned int)len);
         uv_write(wr, (uv_stream_t*)Network::socket, &buf, 1, write_cb);
     } else {
-        gameOver();
+        Game::gameOver();
     }
 }
 

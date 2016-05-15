@@ -3,6 +3,11 @@
 
 #include <string>
 #include <ncurses.h>
+#include <vector>
+
+#include "color.h"
+// *****From Cataclysm-DDA:output.h***** //
+
 //      LINE_NESW  - X for on, O for off
 #define LINE_XOXO 4194424 // '|'   Vertical line. ncurses: ACS_VLINE; Unicode: U+2502
 #define LINE_OXOX 4194417 // '-'   Horizontal line. ncurses: ACS_HLINE; Unicode: U+2500
@@ -28,9 +33,26 @@
 #define LINE_OXXX_C 0xa9
 #define LINE_XXXX_C 0xaa
 
-typedef int nc_color;
-namespace UI {
+std::vector<size_t> get_tag_positions(const std::string &s);
+std::string word_rewrap (const std::string &in, int width);
+void mvprintz(int y, int x, nc_color FG, const char *mes, ...);
+void mvwprintz(WINDOW *w, int y, int x, nc_color FG, const char *mes, ...);
+void printz(nc_color FG, const char *mes, ...);
+void wprintz(WINDOW *w, nc_color FG, const char *mes, ...);
 void draw_border(WINDOW *w, nc_color FG);
+std::string vstring_format(char const *format, va_list args);
+std::vector<std::string> split_by_color(const std::string &s);
+std::string rm_prefix(std::string str, char c1, char c2);
+std::string rm_prefix(std::string str);
+void print_colored_text( WINDOW *w, int y, int x, nc_color &color, nc_color base_color, const std::string &text );
+std::vector<std::string> foldstring ( std::string str, int width );
+int fold_and_print(WINDOW *w, int begin_y, int begin_x, int width, nc_color base_color,
+                   const std::string &text);
+
+
+// *****Cataclysmulti UI***** //
+
+namespace UI {
 void Msgbox(std::string str);
 }
 #endif
