@@ -1,6 +1,8 @@
 #include "main.h"
 
+#include <stdlib.h>
 #include <uv.h>
+#include <iostream>
 
 #include "network.h"
 #include "version.h"
@@ -10,8 +12,8 @@
 int main(int argc, char* argv[])
 {
     if(argc < 4) {
-        puts(VERSION_NAME " " VERSION_PREFIX " " VERSION_VERSION "\n"
-             "Usage: cmulti <address> <port> <name>\n");
+        std::cout<<VERSION_NAME << " " << VERSION_PREFIX << " " << VERSION_VERSION << "\n"
+                 << "Usage: cmulti <address> <port> <name>\n";
         return 1;
     }
     Game::name = argv[3];

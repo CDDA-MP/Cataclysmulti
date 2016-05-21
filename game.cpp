@@ -34,7 +34,7 @@ void gameInit() // Call when connected.
     Network::send(Json::object {
         {"cmd","metadata"},
         {"client",VERSION_NAME},
-        {"ver",VERSION_PREFIX " " VERSION_VERSION},
+        {"ver",VERSION_PREFIX + " " + VERSION_VERSION},
         {"name",Game::name},
     });
 }
