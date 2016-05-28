@@ -10,14 +10,14 @@
 #include "color.h"
 #include "protocol.h"
 
-using namespace json11;
-
 namespace Game
 {
 bool IsGameOver = false;
 
 // Player Infomation
 char* name;
+
+using json11::Json;
 
 bool HandleInput(int key)
 {

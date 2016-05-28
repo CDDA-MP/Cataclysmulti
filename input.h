@@ -1,7 +1,7 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-#include <vector>
+#include <queue>
 namespace Input
 {
 class InputHandler {
@@ -13,7 +13,7 @@ public:
     virtual bool HandleInput(int key);
 };
 
-extern std::vector<InputHandler*> queue;
+extern std::queue<InputHandler*> iqueue;
 void init();
 void end();
 void queue_pushback(InputHandler* handler);

@@ -4,7 +4,7 @@
 #include <ncurses.h>
 #include <assert.h>
 #include <locale.h>
-#include <vector>
+#include <queue>
 
 #include "main.h"
 #include "game.h"
@@ -20,27 +20,25 @@ bool InputHandler::HandleInput(int key) {
     return true;
 }
 static pthread_t InputThread;
-std::vector<InputHandler*> queue;
+std::queue<InputHandler*> iqueue;
 static void* InputLoop(void* arg)
 {
     while(!Game::IsGameOver) {
         int key = getch();
         if(key != -1) {
-            if(queue.empty()) {
+            if(iqueue.empty()) {
                 Game::HandleInput(key);
-            } else {
-                if(queue[0]->HandleInput(key)) {
-                    delete queue[0];
-                    queue.erase(queue.begin());
-                }
+            } else if(iqueue.front()->HandleInput(key)) {
+                delete iqueue.front();
+                iqueue.pop();
             }
         } else {
             Game::gameOver();
         }
-        if(!queue.empty() && !queue[0]->Inited)
+        if(!iqueue.empty() && !iqueue.front()->Inited)
         {
-            queue[0]->Init();
-            queue[0]->Inited = true;
+            iqueue.front()->Init();
+            iqueue.front()->Inited = true;
         }
     }
     return NULL;
@@ -65,8 +63,8 @@ void end()
 
 void queue_pushback(InputHandler* handler)
 {
-    queue.push_back(handler);
-    if (queue.size() == 1) {
+    iqueue.push(handler);
+    if (iqueue.size() == 1) {
         handler->Init();
         handler->Inited = true;
     }
