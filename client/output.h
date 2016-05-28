@@ -34,7 +34,7 @@
 #define LINE_XXXX_C 0xaa
 
 std::vector<size_t> get_tag_positions(const std::string &s);
-std::string word_rewrap (const std::string &in, int width);
+std::string word_rewrap(const std::string &in, int width);
 void mvprintz(int y, int x, nc_color FG, const char *mes, ...);
 void mvwprintz(WINDOW *w, int y, int x, nc_color FG, const char *mes, ...);
 void printz(nc_color FG, const char *mes, ...);
@@ -44,8 +44,8 @@ std::string vstring_format(char const *format, va_list args);
 std::vector<std::string> split_by_color(const std::string &s);
 std::string rm_prefix(std::string str, char c1, char c2);
 std::string rm_prefix(std::string str);
-void print_colored_text( WINDOW *w, int y, int x, nc_color &color, nc_color base_color, const std::string &text );
-std::vector<std::string> foldstring ( std::string str, int width );
+void print_colored_text(WINDOW *w, int y, int x, nc_color &color, nc_color base_color, const std::string &text);
+std::vector<std::string> foldstring(std::string str, int width);
 int fold_and_print(WINDOW *w, int begin_y, int begin_x, int width, nc_color base_color,
                    const std::string &text);
 
@@ -53,6 +53,6 @@ int fold_and_print(WINDOW *w, int begin_y, int begin_x, int width, nc_color base
 // *****Cataclysmulti UI***** //
 
 namespace UI {
-void Msgbox(std::string str);
+    void Msgbox(std::string str);
 }
 #endif

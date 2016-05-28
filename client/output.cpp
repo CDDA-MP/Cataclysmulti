@@ -10,25 +10,27 @@
 #include "catacharset.h"
 #include "color.h"
 
-std::vector<size_t> get_tag_positions(const std::string &s)
-{
+std::vector<size_t> get_tag_positions(const std::string &s) {
     std::vector<size_t> ret;
     size_t pos = s.find("<color_", 0, 7);
+
     while (pos != std::string::npos) {
         ret.push_back(pos);
         pos = s.find("<color_", pos + 1, 7);
     }
+
     pos = s.find("</color>", 0, 8);
+
     while (pos != std::string::npos) {
         ret.push_back(pos);
         pos = s.find("</color>", pos + 1, 8);
     }
+
     std::sort(ret.begin(), ret.end());
     return ret;
 }
 
-std::string word_rewrap (const std::string &in, int width)
-{
+std::string word_rewrap(const std::string &in, int width) {
     std::ostringstream o;
 
     // find non-printing tags
@@ -39,15 +41,16 @@ std::string word_rewrap (const std::string &in, int width)
     const char *instr = in.c_str();
     bool skipping_tag = false;
 
-    for (int j = 0, x = 0; j < (int)in.size(); ) {
+    for (int j = 0, x = 0; j < (int) in.size();) {
         const char *ins = instr + j;
         int len = ANY_LENGTH;
         uint32_t uc = UTF8_getch(&ins, &len);
 
-        if (uc == '<') { // maybe skip non-printing tag
+        if (uc == '<') {   // maybe skip non-printing tag
             std::vector<size_t>::iterator it;
+
             for (it = tag_positions.begin(); it != tag_positions.end(); ++it) {
-                if ((int)*it == j) {
+                if ((int) *it == j) {
                     skipping_tag = true;
                     break;
                 }
@@ -60,6 +63,7 @@ std::string word_rewrap (const std::string &in, int width)
             if (uc == '>') {
                 skipping_tag = false;
             }
+
             continue;
         }
 
@@ -69,9 +73,11 @@ std::string word_rewrap (const std::string &in, int width)
             if (lastwb == lastout) {
                 lastwb = j;
             }
-            for(int k = lastout; k < lastwb; k++) {
+
+            for (int k = lastout; k < lastwb; k++) {
                 o << in[k];
             }
+
             o << '\n';
             x = 0;
             lastout = j = lastwb;
@@ -81,15 +87,15 @@ std::string word_rewrap (const std::string &in, int width)
             lastwb = j;
         }
     }
-    for (int k = lastout; k < (int)in.size(); k++) {
+
+    for (int k = lastout; k < (int) in.size(); k++) {
         o << in[k];
     }
 
     return o.str();
 }
 
-void mvprintz(int y, int x, nc_color FG, const char *mes, ...)
-{
+void mvprintz(int y, int x, nc_color FG, const char *mes, ...) {
     va_list ap;
     va_start(ap, mes);
     const std::string text = vstring_format(mes, ap);
@@ -99,8 +105,7 @@ void mvprintz(int y, int x, nc_color FG, const char *mes, ...)
     attroff(FG);
 }
 
-void mvwprintz(WINDOW *w, int y, int x, nc_color FG, const char *mes, ...)
-{
+void mvwprintz(WINDOW *w, int y, int x, nc_color FG, const char *mes, ...) {
     va_list ap;
     va_start(ap, mes);
     const std::string text = vstring_format(mes, ap);
@@ -110,8 +115,7 @@ void mvwprintz(WINDOW *w, int y, int x, nc_color FG, const char *mes, ...)
     wattroff(w, FG);
 }
 
-void printz(nc_color FG, const char *mes, ...)
-{
+void printz(nc_color FG, const char *mes, ...) {
     va_list ap;
     va_start(ap, mes);
     const std::string text = vstring_format(mes, ap);
@@ -121,8 +125,7 @@ void printz(nc_color FG, const char *mes, ...)
     attroff(FG);
 }
 
-void wprintz(WINDOW *w, nc_color FG, const char *mes, ...)
-{
+void wprintz(WINDOW *w, nc_color FG, const char *mes, ...) {
     va_list ap;
     va_start(ap, mes);
     const std::string text = vstring_format(mes, ap);
@@ -132,8 +135,7 @@ void wprintz(WINDOW *w, nc_color FG, const char *mes, ...)
     wattroff(w, FG);
 }
 
-std::string vstring_format(char const *format, va_list args)
-{
+std::string vstring_format(char const *format, va_list args) {
     errno = 0; // Clear errno before trying
     std::vector<char> buffer(1024, '\0');
 
@@ -169,16 +171,17 @@ std::string vstring_format(char const *format, va_list args)
     return std::string(&buffer[0]);
 }
 
-std::vector<std::string> split_by_color(const std::string &s)
-{
+std::vector<std::string> split_by_color(const std::string &s) {
     std::vector<std::string> ret;
     std::vector<size_t> tag_positions = get_tag_positions(s);
     size_t last_pos = 0;
     std::vector<size_t>::iterator it;
+
     for (it = tag_positions.begin(); it != tag_positions.end(); ++it) {
         ret.push_back(s.substr(last_pos, *it - last_pos));
         last_pos = *it;
     }
+
     // and the last (or only) one
     ret.push_back(s.substr(last_pos, std::string::npos));
     return ret;
@@ -186,28 +189,27 @@ std::vector<std::string> split_by_color(const std::string &s)
 
 
 //remove prefix of a strng, between c1 and c2, ie, "<prefix>remove it"
-std::string rm_prefix(std::string str, char c1, char c2)
-{
-    if(!str.empty() && str[0] == c1) {
+std::string rm_prefix(std::string str, char c1, char c2) {
+    if (!str.empty() && str[0] == c1) {
         size_t pos = str.find_first_of(c2);
-        if(pos != std::string::npos) {
+
+        if (pos != std::string::npos) {
             str = str.substr(pos + 1);
         }
     }
+
     return str;
 }
 
-std::string rm_prefix(std::string str)
-{
-    return rm_prefix(str,'<','>');
+std::string rm_prefix(std::string str) {
+    return rm_prefix(str, '<', '>');
 }
-std::string remove_color_tags(const std::string &s)
-{
+std::string remove_color_tags(const std::string &s) {
     std::string ret;
     std::vector<size_t> tag_positions = get_tag_positions(s);
     size_t next_pos = 0;
 
-    if ( tag_positions.size() > 1 ) {
+    if (tag_positions.size() > 1) {
         for (size_t i = 0; i < tag_positions.size(); ++i) {
             ret += s.substr(next_pos, tag_positions[i] - next_pos);
             next_pos = s.find(">", tag_positions[i], 1) + 1;
@@ -217,106 +219,113 @@ std::string remove_color_tags(const std::string &s)
     } else {
         return s;
     }
+
     return ret;
 }
 
-void print_colored_text( WINDOW *w, int y, int x, nc_color &color, nc_color base_color, const std::string &text )
-{
-    wmove( w, y, x );
-    const auto color_segments = split_by_color( text );
-    for( auto seg : color_segments ) {
-        if( seg.empty() ) {
+void print_colored_text(WINDOW *w, int y, int x, nc_color &color, nc_color base_color, const std::string &text) {
+    wmove(w, y, x);
+    const auto color_segments = split_by_color(text);
+
+    for (auto seg : color_segments) {
+        if (seg.empty()) {
             continue;
         }
 
-        if( seg[0] == '<' ) {
-            color = get_color_from_tag( seg, base_color );
-            seg = rm_prefix( seg );
+        if (seg[0] == '<') {
+            color = get_color_from_tag(seg, base_color);
+            seg = rm_prefix(seg);
         }
 
-        wprintz( w, color, "%s", seg.c_str() );
+        wprintz(w, color, "%s", seg.c_str());
     }
 }
 
-std::vector<std::string> foldstring ( std::string str, int width )
-{
+std::vector<std::string> foldstring(std::string str, int width) {
     std::vector<std::string> lines;
-    if ( width < 1 ) {
-        lines.push_back( str );
+
+    if (width < 1) {
+        lines.push_back(str);
         return lines;
     }
+
     std::stringstream sstr(str);
     std::string strline;
+
     while (std::getline(sstr, strline, '\n')) {
         std::string wrapped = word_rewrap(strline, width);
         std::stringstream swrapped(wrapped);
         std::string wline;
+
         while (std::getline(swrapped, wline, '\n')) {
             lines.push_back(wline);
         }
     }
+
     return lines;
 }
 
 // returns number of printed lines
 int fold_and_print(WINDOW *w, int begin_y, int begin_x, int width, nc_color base_color,
-                   const std::string &text)
-{
+                   const std::string &text) {
     nc_color color = base_color;
     std::vector<std::string> textformatted;
     textformatted = foldstring(text, width);
-    for( int line_num = 0; (size_t)line_num < textformatted.size(); line_num++) {
-        print_colored_text( w, line_num + begin_y, begin_x, color, base_color, textformatted[line_num] );
+
+    for (int line_num = 0; (size_t) line_num < textformatted.size(); line_num++) {
+        print_colored_text(w, line_num + begin_y, begin_x, color, base_color, textformatted[line_num]);
     }
+
     return textformatted.size();
 }
 
-void draw_border(WINDOW *w, nc_color FG)
-{
+void draw_border(WINDOW *w, nc_color FG) {
     wattron(w, FG);
     wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX,
-            LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX );
+            LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
     wattroff(w, FG);
 }
 
 
 namespace UI {
-class MsgboxInputHandler:public Input::InputHandler {
-public:
-    MsgboxInputHandler(std::string& _str) {
-        str = _str;
+    class MsgboxInputHandler: public Input::InputHandler {
+        public:
+            MsgboxInputHandler(std::string& _str) {
+                str = _str;
+            }
+
+            void Init() {
+                std::vector<std::string> textformatted = foldstring(str, getmaxx(stdscr) - 2);
+                int winwidth = 0;
+
+                for (auto & s : textformatted) {   //Get the width of the longest line.
+                    winwidth = std::max(winwidth, utf8_width(remove_color_tags(s)));
+                }
+
+                int winheight = (int) textformatted.size();
+                w = newwin(winheight + 2, winwidth + 2, (getmaxy(stdscr) - winheight) / 2, (getmaxx(stdscr) - winwidth) / 2);
+                draw_border(w, 0);
+
+                fold_and_print(w, 1, 1, winwidth, 0, str);
+                wrefresh(w);
+            }
+
+            bool HandleInput(int key) {
+                if (key == '\n') {
+                    werase(w);
+                    wrefresh(w);
+                    delwin(w);
+                    return true;
+                }
+
+                return false;
+            }
+        private:
+            WINDOW *w;
+            std::string str;
+    };
+
+    void Msgbox(std::string str) {
+        Input::queue_pushback(new MsgboxInputHandler(str));
     }
-
-    void Init() {
-        std::vector<std::string> textformatted = foldstring(str,getmaxx(stdscr)-2);
-        int winwidth = 0;
-        for(auto &s:textformatted) { //Get the width of the longest line.
-            winwidth = std::max(winwidth,utf8_width(remove_color_tags(s)));
-        }
-        int winheight = (int)textformatted.size();
-        w = newwin(winheight+2,winwidth+2,(getmaxy(stdscr)-winheight)/2,(getmaxx(stdscr)-winwidth)/2);
-        draw_border(w,0);
-
-        fold_and_print(w,1,1,winwidth,0,str);
-        wrefresh(w);
-    }
-
-    bool HandleInput(int key) {
-        if(key == '\n') {
-            werase(w);
-            wrefresh(w);
-            delwin(w);
-            return true;
-        }
-        return false;
-    }
-private:
-    WINDOW *w;
-    std::string str;
-};
-
-void Msgbox(std::string str)
-{
-    Input::queue_pushback(new MsgboxInputHandler(str));
-}
 }
