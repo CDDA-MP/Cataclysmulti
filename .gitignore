@@ -6,7 +6,8 @@ CMakeCache.txt
 cmake_install.cmake
 
 #Target file(s)
-Cataclysmulti
+cmulti
+cmultis
 
 #astyle backups
 *.orig

@@ -14,7 +14,8 @@ namespace Network {
             if (!(json["client"].is_string() || json["ver"].is_string() || json["userid"].is_string())) {return ;}
 
             player.setInfo(json["userid"].string_value(),json["ver"].string_value(),json["client"].string_value());
-            cout << Network::getAddress(player.handle) << " login with userid [" << player.userid << "]" << endl;
+            Address addr = Network::getAddress(player.handle);
+            cout << addr.addr << ':' <<addr.port << " login with userid [" << player.userid << "]" << endl;
         }
 
         std::unordered_map<std::string, Network::Protocol::Callback> Callbacks {
