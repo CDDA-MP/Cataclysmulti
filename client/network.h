@@ -6,6 +6,7 @@
 #include <string.h>
 namespace Network {
     extern bool connected;
+    extern bool handshaked;
     void connect(const char* ip, int port);
     void disconnect();
 

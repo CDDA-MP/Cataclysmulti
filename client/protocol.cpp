@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <json11.hpp>
+#include <iostream>
 
 #include "network.h"
 #include "input.h"
@@ -17,9 +18,7 @@ namespace Network {
         }
 
         static void colormap(const json11::Json &json) {
-            if (!json["map"].is_object()) {
-                return;
-            }
+            if (!json["map"].is_object()) {return;}
 
             std::map<std::string, json11::Json> map = json["map"].object_items();
 
@@ -34,9 +33,27 @@ namespace Network {
             }
         }
 
+        static void metadata(const json11::Json &json) {
+            if (!json["num"].is_number()) {return;}
+
+            double serverNumber = json["num"].number_value();
+
+            if (serverNumber > Version::number) {
+                std::cout << "Client out of date!" << std::endl;
+            } else if (serverNumber < Version::number) {
+                std::cout << "Client version too high!" << std::endl;
+            } else {
+                Network::Protocol::Out::sendInfo();
+                Game::gameInit();
+            }
+
+        }
+
+        //Callback list
         std::unordered_map<std::string, Network::Protocol::Callback> Callbacks {
             {"msgbox", msgbox },
             {"colormap", colormap },
+            {"metadata", metadata },
         };
 
         void call_Callback(const json11::Json &json) {
@@ -56,9 +73,16 @@ namespace Network {
             void sendmeta() {
                 Network::send(json11::Json::object {
                     {"cmd", "metadata" },
-                    {"client", VERSION_NAME },
-                    {"ver", VERSION_PREFIX + " " + VERSION_VERSION },
-                    {"userid", Game::userid },
+                    {"client", Version::name},
+                    {"strver", Version::type + ' ' + Version::version },
+                    {"num",Version::number},
+                });
+            }
+
+            void sendInfo() {
+                Network::send(json11::Json::object {
+                    {"cmd", "info" },
+                    {"userid", Game::userid},
                 });
             }
         }

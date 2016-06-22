@@ -65,7 +65,7 @@ namespace Network {
     }
 
     void send(const std::string& str,const Player& player) {
-        Network::sendRaw(player.handle,str.c_str(), str.size());
+        Network::sendRaw(player.getHandle(),str.c_str(), str.size());
     }
 
     static void on_new_connection(uv_stream_t *server, int status) {

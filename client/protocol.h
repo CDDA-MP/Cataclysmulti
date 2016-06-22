@@ -9,6 +9,7 @@ namespace Network {
         void call_Callback(const json11::Json& json);
         namespace Out {
             void sendmeta();
+            void sendInfo();
         }
     }
 }

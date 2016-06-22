@@ -24,8 +24,6 @@ namespace Game {
 
     void gameInit() { // Call when connected.
         Input::init();
-        //send client metadata.
-        Network::Protocol::Out::sendmeta();
     }
 
     void gameOver() { // Call when disconnected

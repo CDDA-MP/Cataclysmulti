@@ -11,8 +11,8 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        std::cout << VERSION_NAME << " " << VERSION_PREFIX << " " << VERSION_VERSION << "\n"
-                  << "Usage: cmulti <address> <port> <userid>\n";
+        std::cout << Version::name << " " << Version::type << " " << Version::version << std::endl
+                  << "Usage: cmulti <address> <port> <userid>" << std::endl;
         return 1;
     }
 

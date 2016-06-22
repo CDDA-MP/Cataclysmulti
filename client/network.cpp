@@ -1,5 +1,6 @@
 #include "network.h"
 
+#include <iostream>
 #include <uv.h>
 #include <json11.hpp>
 
@@ -9,7 +10,8 @@
 
 // TODO:Remove libuv dependence.
 namespace Network {
-    bool connected;
+    bool connected = false;
+    bool handshaked = false;
     static uv_connect_t req;
     uv_tcp_t socket;
     static void alloc_cb(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
@@ -53,7 +55,11 @@ namespace Network {
         if (status == 0) {
             uv_read_start(req->handle, alloc_cb, read_cb);
             Network::connected = true;
-            Game::gameInit();
+
+            //send metadata and start to handshake.
+            Network::handshaked = false;
+            std::cout << "Checking the server infomation..." <<std::endl;
+            Network::Protocol::Out::sendmeta();
         } else {
             printf("Unable to create connection: Status %i\n", status);
         }
@@ -92,7 +98,7 @@ namespace Network {
 
         sockaddr dest;
         uv_ip4_addr(addr, port, (sockaddr_in*) &dest);
-
+        std::cout<<"Trying " << port << ':' << addr << " ..."<<std::endl;
         uv_tcp_connect(&req, &socket, &dest, connect_cb);
     }
 
