@@ -3,7 +3,8 @@
 
 #include <string>
 
-namespace Version {
+namespace Version
+{
     extern const std::string name;
     extern const std::string type;
     extern const std::string version;

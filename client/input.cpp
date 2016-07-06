@@ -11,31 +11,42 @@
 #include "color.h"
 
 
-namespace Input {
+namespace Input
+{
     InputHandler::InputHandler() {}
     InputHandler::~InputHandler() {}
     void InputHandler::Init() {}
-    bool InputHandler::HandleInput(int key) {
+    bool InputHandler::HandleInput(int key)
+    {
         return true;
     }
     static pthread_t InputThread;
     std::queue<InputHandler*> iqueue;
-    static void* InputLoop(void* arg) {
-        while (!Game::IsGameOver) {
+    static void* InputLoop(void* arg)
+    {
+        while (!Game::IsGameOver)
+        {
             int key = getch();
 
-            if (key != -1) {
-                if (iqueue.empty()) {
+            if (key != -1)
+            {
+                if (iqueue.empty())
+                {
                     Game::HandleInput(key);
-                } else if (iqueue.front()->HandleInput(key)) {
+                }
+                else if (iqueue.front()->HandleInput(key))
+                {
                     delete iqueue.front();
                     iqueue.pop();
                 }
-            } else {
+            }
+            else
+            {
                 Game::gameOver();
             }
 
-            if (!iqueue.empty() && !iqueue.front()->Inited) {
+            if (!iqueue.empty() && !iqueue.front()->Inited)
+            {
                 iqueue.front()->Init();
                 iqueue.front()->Inited = true;
             }
@@ -44,7 +55,8 @@ namespace Input {
         return NULL;
     }
 
-    void init() {
+    void init()
+    {
         setlocale(LC_ALL, "");
         initscr();
         init_colors();
@@ -55,14 +67,17 @@ namespace Input {
         assert(!r);
     }
 
-    void end() {
+    void end()
+    {
         endwin();
     }
 
-    void queue_pushback(InputHandler* handler) {
+    void queue_pushback(InputHandler* handler)
+    {
         iqueue.push(handler);
 
-        if (iqueue.size() == 1) {
+        if (iqueue.size() == 1)
+        {
             handler->Init();
             handler->Inited = true;
         }

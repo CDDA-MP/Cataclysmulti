@@ -10,23 +10,27 @@
 #include "color.h"
 #include "protocol.h"
 
-namespace Game {
+namespace Game
+{
     bool IsGameOver = false;
 
 // Player Infomation
     char* userid;
 
-    bool HandleInput(int key) {
+    bool HandleInput(int key)
+    {
         printw("Game Key Pressed:%i", key);
         refresh();
         return false;
     }
 
-    void gameInit() { // Call when connected.
+    void gameInit()   // Call when connected.
+    {
         Input::init();
     }
 
-    void gameOver() { // Call when disconnected
+    void gameOver()   // Call when disconnected
+    {
         Game::IsGameOver = true;
         Network::disconnect();
         Input::end();

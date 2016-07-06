@@ -5,12 +5,15 @@
 
 #include "player.h"
 
-namespace Network {
-    namespace Protocol {
+namespace Network
+{
+    namespace Protocol
+    {
         typedef void (*Callback)(const json11::Json &json,Player &player);
         inline void call_Callback(const json11::Json &json,Player &player);
         void call_Callback(const json11::Json &json, Player *player);
-        namespace Out {
+        namespace Out
+        {
             void sendmeta(const Player&player);
             typedef std::map<std::string,std::array<int,3>> colormap_t;
             void colormap(const Player &player,const colormap_t &cmap);

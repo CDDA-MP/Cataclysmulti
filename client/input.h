@@ -2,14 +2,16 @@
 #define _INPUT_H_
 
 #include <queue>
-namespace Input {
-    class InputHandler {
-        public:
-            bool Inited;
-            InputHandler();
-            virtual ~InputHandler();
-            virtual void Init();
-            virtual bool HandleInput(int key);
+namespace Input
+{
+    class InputHandler
+    {
+    public:
+        bool Inited;
+        InputHandler();
+        virtual ~InputHandler();
+        virtual void Init();
+        virtual bool HandleInput(int key);
     };
 
     extern std::queue<InputHandler*> iqueue;

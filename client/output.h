@@ -52,7 +52,8 @@ int fold_and_print(WINDOW *w, int begin_y, int begin_x, int width, nc_color base
 
 // *****Cataclysmulti UI***** //
 
-namespace UI {
+namespace UI
+{
     void Msgbox(std::string str);
 }
 #endif

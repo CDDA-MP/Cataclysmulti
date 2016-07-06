@@ -15,3 +15,6 @@ cmultis
 #Auto generated Makefile
 Makefile
 makefile
+
+#clion project file
+.idea/

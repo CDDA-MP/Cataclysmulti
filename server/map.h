@@ -2,17 +2,19 @@
 #define _MAP_H_
 #include <string>
 
-namespace Map {
+namespace Map
+{
     typedef long intp;
-    class chunk {
-        private:
-            int m_x;
-            int m_y;
-            bool m_freeProtected;
-        public:
-            inline bool isFreeProtected() {return m_freeProtected;}
-            inline bool setFreeProtect(bool fp) {m_freeProtected = fp; return fp;}
-            chunk(intp x,intp y);
+    class chunk
+    {
+    private:
+        int m_x;
+        int m_y;
+        bool m_freeProtected;
+    public:
+        inline bool isFreeProtected() {return m_freeProtected;}
+        inline bool setFreeProtect(bool fp) {m_freeProtected = fp; return fp;}
+        chunk(intp x,intp y);
     };
     // The x/y here are the position of a chunk,not tile.
     void init();

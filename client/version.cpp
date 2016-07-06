@@ -2,7 +2,8 @@
 
 #include <string>
 
-namespace Version {
+namespace Version
+{
     const std::string name = "Cataclysmulti";
     const std::string type = "alpha";
     const std::string version = "1.0";

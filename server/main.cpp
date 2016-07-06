@@ -4,7 +4,8 @@
 #include "network.h"
 #include "map.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     Map::init();
     Network::bind("0.0.0.0", 8000);
 

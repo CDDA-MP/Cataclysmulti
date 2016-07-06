@@ -4,7 +4,8 @@
 #include <uv.h>
 #include <json11.hpp>
 #include <string.h>
-namespace Network {
+namespace Network
+{
     extern bool connected;
     extern bool handshaked;
     void connect(const char* ip, int port);

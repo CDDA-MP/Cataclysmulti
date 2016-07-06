@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 echo Styling...
-astyle --quiet --indent=spaces=4 --unpad-paren --pad-header --break-blocks --indent-namespaces --indent-cases --indent-switches --indent-classes --add-one-line-brackets --convert-tabs --style=java --recursive --suffix=none *.cpp *.h
+astyle --style=allman --indent=spaces=4 --indent-namespaces --keep-one-line-blocks --indent-preproc-block --indent-preproc-define --mode=c --prefix=none -R *.cpp *.h
 
 echo done.

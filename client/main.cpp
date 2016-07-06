@@ -9,8 +9,10 @@
 
 #include "game.h"
 
-int main(int argc, char* argv[]) {
-    if (argc < 4) {
+int main(int argc, char* argv[])
+{
+    if (argc < 4)
+    {
         std::cout << Version::name << " " << Version::type << " " << Version::version << std::endl
                   << "Usage: cmulti <address> <port> <userid>" << std::endl;
         return 1;

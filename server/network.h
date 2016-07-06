@@ -7,18 +7,21 @@
 #include "uv.h"
 #include "player.h"
 
-namespace Network {
+namespace Network
+{
     bool bind(const char *addr = "0.0.0.0", int port = 8000);
 
     void send(const json11::Json& json,const Player& player);
     void send(const std::string& str,const Player& player);
 
-    struct Address {
+    struct Address
+    {
         char *addr;
         in_port_t port;
     };
 
-    struct AddressHasher {
+    struct AddressHasher
+    {
         std::size_t operator()(const Network::Address& k) const;
     };
 
@@ -26,7 +29,8 @@ namespace Network {
     Address getAddress(const uv_tcp_t *handle);
 }
 
-namespace std {
+namespace std
+{
     template<>
     struct hash<Network::Address>;
 }

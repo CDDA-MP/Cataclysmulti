@@ -1,4 +1,5 @@
-namespace Game {
+namespace Game
+{
     extern char* userid;
     extern bool IsGameOver;
     bool HandleInput(int key);

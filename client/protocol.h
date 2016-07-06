@@ -3,11 +3,14 @@
 
 #include <json11.hpp>
 
-namespace Network {
-    namespace Protocol {
+namespace Network
+{
+    namespace Protocol
+    {
         typedef void (*Callback)(const json11::Json& json);
         void call_Callback(const json11::Json& json);
-        namespace Out {
+        namespace Out
+        {
             void sendmeta();
             void sendInfo();
         }
